@@ -1,24 +1,31 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, {useState} from 'react';
+import View from './ui/View';
+import {fetchCard, getCardMeaning} from './api/dataFetcher'
 
 function App() {
+
+  const [currCard, setCurrCard] = useState(fetchCard());
+  const [cardState, setCardState] = useState("question")
+  const {hiragana, kanji, id, meanings} = currCard;
+
+  const verifyDatas = (meaningEntered) => {
+    const currMeanings = getCardMeaning(id)
+    if(currMeanings.meanings.includes(meaningEntered)) {
+      setCardState("valid")
+    } else {
+      setCardState("invalid")
+    }
+    setCurrCard({...currCard, meanings: currMeanings.meanings})
+  }
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <View
+        hiragana={hiragana}
+        kanji={kanji}
+        meanings={meanings}
+        cardState={cardState}
+        verify={verifyDatas}
+        next={() => { setCurrCard(fetchCard()); setCardState('question')}}/>
     </div>
   );
 }
